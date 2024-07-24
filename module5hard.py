@@ -9,7 +9,6 @@ class Video:
         self.title = str(title)
         self.duration = int(duration)
         self.time_now = 0
-        self.adult_mode = False
 class UrTube:
     def __init__(self, users, videos, current_user):
         self.users = []
@@ -17,19 +16,19 @@ class UrTube:
         self.current_user = None
 
 
-    def log_in(self, nickname, password):
-        if nickname and password in self.users:
+    def log_in(self, nickname, password, age):
+        if nickname and password in self.users and age >= 18:
             self.current_user = (nickname, password)
-        else:
-           register()
 
     def register(self, nickname, password, age):
+        print('Войдите в аккаунт, чтобы смотреть видео')
         if nickname in self.users:
             print(f"Пользователь {nickname} уже существует")
         else:
             self.users.append(nickname)
             self.users.append(password)
             self.users.append(age)
+
     def log_out(self, current_user):
         self.current_user = None
 
@@ -49,7 +48,7 @@ class UrTube:
                     return self.videos
     def watch_video(self, title_video):
         if title_video == self.videos:
-            print(time.sleep(10))
+            print(time.sleep())
 
 
 
