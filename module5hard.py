@@ -20,6 +20,8 @@ class UrTube:
     def log_in(self, nickname, password):
         if nickname and password in self.users:
             self.current_user = (nickname, password)
+        else:
+           register()
 
     def register(self, nickname, password, age):
         if nickname in self.users:
