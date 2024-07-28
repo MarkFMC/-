@@ -4,8 +4,10 @@ import time
 class User:
     def __init__(self, nickname, password, age):
         self.nickname = nickname
-        self.password = password
+        self.password = hash(password)
         self.age = age
+    def __str__(self):
+        return str(self.nickname)
 
 
 class Video:
@@ -24,7 +26,7 @@ class UrTube:
 
     def log_in(self, nickname, password):
         for user in self.users:
-            if user.nickname.lower() == nickname.lower() and user.password == password:
+            if user.nickname.lower() == nickname.lower() and user.hash(password) == hash(password):
                 self.current_user = user
                 return
         print("Неверные логин или пароль")
@@ -60,8 +62,8 @@ class UrTube:
             for video in self.videos:
                 if video.title.lower() == video_title.lower():
 
-                    video.time_now = 0
-                    for i in range(0, 1):
+                    video.time_now = 1
+                    for i in range(1, video.duration + 1):
                         print(video.time_now, end=' ')
                         time.sleep(1),
                         video.time_now += 1
