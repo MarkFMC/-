@@ -1,6 +1,4 @@
 
-# Пример возможного вывода:
-# Обнаружен файл: main.py, Путь: ./main.py, Размер: 111 байт, Время изменения: 11.11.1111 11:11, Родительская директория.
 import time
 import os
 print(os.getcwd())
@@ -8,10 +6,10 @@ print(os.getcwd())
 directory = '.'
 for root, dirs, files in os.walk(directory):
     for file in files:
-        filepath = os.path.join(file)
-        filetime = os.path.getmtime(file)
+        filepath = os.path.join(root, file)
+        filetime = os.path.getmtime(directory)
         formatted_time = time.strftime("%d.%m.%Y %H:%M", time.localtime(filetime))
-        filesize = os.path.getsize(file)
-        parent_dir = os.path.dirname(file)
+        filesize = os.path.getsize(directory)
+        parent_dir = os.path.dirname(directory)
         print(
             f'Обнаружен файл: {file}, Путь: {filepath}, Размер: {filesize} байт, Время изменения: {formatted_time}, Родительская директория. {parent_dir}')
