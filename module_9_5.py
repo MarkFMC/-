@@ -37,17 +37,15 @@ class Iterator:
         return self
 
     def __next__(self):
-        self.pointer += self.step
 
-        if self.step > 0:
-            if self.pointer > self.stop:
-                raise StopIteration
-            return self.pointer
-        if self.step < 0:
-            if self.pointer < self.stop:
-                raise StopIteration
-
-        return self.pointer
+        if self.step < 0 and self.pointer < self.stop:
+            raise StopIteration()
+        if self.step > 0 and self.pointer > self.stop:
+            raise StopIteration()
+        else:
+            n = self.pointer
+            self.pointer += self.step
+            return n
 
 
 try:
@@ -65,16 +63,16 @@ iter5 = Iterator(10, 1)
 #
 for i in iter2:
     print(i, end=' ')
-    print()
+print()
 for i in iter3:
     print(i, end=' ')
-    print()
+print()
 for i in iter4:
     print(i, end=' ')
-    print()
+print()
 for i in iter5:
     print(i, end=' ')
-    print()
+print()
 #
 # Вывод на консоль:
 # Шаг указан неверно
