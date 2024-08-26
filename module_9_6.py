@@ -8,11 +8,11 @@
 
 
 def all_variants(text):
-    for l in text:
-        yield l
-    for k in range(len(text)):
-        for j in range(k + 2, len(text) + 1):
-            yield text[k:j]
+    for i in range(1, len(text) + 1):
+        for k in range(len(text)):
+            if k + i > len(text):
+                continue
+            yield text[k:k + i]
 
 
 # Пример работы функции:
