@@ -9,24 +9,34 @@
 # Считывать информацию построчно (readline), пока считанная строка не окажется пустой.
 # Во время считывания добавлять каждую строку в список all_data.
 import datetime
-
-
-# import multiprocessing
+import multiprocessing
 
 
 def read_info(name):
     all_data = []
     with open(name, 'r') as file:
-        lines = file.readline()
-        for line in lines:
-            all_data.append(line)
+        while True:
+            lines = file.readline()
+            if not lines:
+                break
+            all_data.append(lines)
 
 
 filenames = [f'./file {number}.txt' for number in range(1, 5)]
-# start = datetime.datetime.now()
-read_info(filenames)
-# end = datetime.datetime.now()
-# print(start - end)
+start = datetime.datetime.now()
+for filename in filenames:
+    read_info(filename)
+end = datetime.datetime.now()
+print(end - start)
+
+# if __name__ == '__main__':
+#     start = datetime.datetime.now()
+#     with multiprocessing.Pool(processes=4) as pool:
+#         pool.map(read_info, filenames)
+#     end = datetime.datetime.now()
+#     print(end - start)
+
+
 # Этих операций достаточно, чтобы рассмотреть преимущество многопроцессного выполнения программы над линейным.
 # Создайте список названий файлов в соответствии с названиями файлов архива.
 # Вызовите функцию read_info для каждого файла по очереди (линейно) и измерьте время выполнения и выведите его в консоль.
