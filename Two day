@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>График работы 1/2</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .header h1 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        label {
+            font-weight: bold;
+            color: #555;
+        }
+        
+        input, select, button {
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        
+        input:focus, select:focus {
+            border-color: #667eea;
+            outline: none;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        button:active {
+            transform: scale(0.98);
+        }
+        
+        .calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+            margin-top: 20px;
+        }
+        
+        .calendar-header {
+            grid-column: 1 / -1;
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            text-align: center;
+            font-weight: bold;
+            background: #f0f0f0;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        
+        .day {
+            padding: 8px;
+            text-align: center;
+            border-radius: 6px;
+            font-size: 14px;
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .work-day {
+            background: #4CAF50;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .weekend {
+            background: #f44336;
+            color: white;
+        }
+        
+        .rest-day {
+            background: #2196F3;
+            color: white;
+        }
+        
+        .current-day {
+            border: 3px solid #FFC107;
+            box-shadow: 0 0 10px rgba(255, 193, 7, 0.5);
+        }
+        
+        .empty-day {
+            background: #f0f0f0;
+            color: #999;
+        }
+        
+        .stats {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e8f5e8;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .legend {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+        }
+        
+        .legend-color {
+            width: 15px;
+            height: 15px;
+            border-radius: 3px;
+        }
+        
+        .month-header {
+            grid-column: 1 / -1;
+            text-align: center;
+            font-weight: bold;
+            font-size: 18px;
+            margin: 20px 0 10px 0;
+            padding: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 8px;
+        }
+        
+        @media (max-width: 480px) {
+            .day {
+                font-size: 12px;
+                padding: 5px;
+                min-height: 35px;
+            }
+            
+            input, select, button {
+                font-size: 14px;
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📅 График работы 1/2</h1>
+            <p>Один рабочий день → два выходных</p>
+        </div>
+        
+        <div class="controls">
+            <div class="input-group">
+                <label for="startDate">Дата начала графика:</label>
+                <input type="date" id="startDate" value="">
+            </div>
+            
+            <div class="input-group">
+                <label for="startType">Тип первого дня:</label>
+                <select id="startType">
+                    <option value="work">Рабочий день</option>
+                    <option value="rest">Выходной</option>
+                </select>
+            </div>
+            
+            <div class="input-group">
+                <label for="year">Год для отображения:</label>
+                <select id="year"></select>
+            </div>
+            
+            <button onclick="generateSchedule()">Сгенерировать график</button>
+        </div>
+        
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background: #4CAF50;"></div>
+                <span>Рабочий день</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #f44336;"></div>
+                <span>Выходной</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #2196F3;"></div>
+                <span>Отдых (2-й выходной)</span>
+            </div>
+        </div>
+        
+        <div id="calendar"></div>
+        
+        <div class="stats" id="stats">
+            <p>Выберите дату начала и нажмите "Сгенерировать график"</p>
+        </div>
+    </div>
+
+    <script>
+        // Инициализация дат
+        function initializeDates() {
+            const today = new Date();
+            const year = today.getFullYear();
+            
+            // Устанавливаем текущую дату по умолчанию
+            document.getElementById('startDate').value = today.toISOString().split('T')[0];
+            
+            // Заполняем выбор года
+            const yearSelect = document.getElementById('year');
+            for (let i = year - 1; i <= year + 1; i++) {
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = i;
+                if (i === year) option.selected = true;
+                yearSelect.appendChild(option);
+            }
+        }
+        
+        // Генерация графика
+        function generateSchedule() {
+            const startDate = new Date(document.getElementById('startDate').value);
+            const startType = document.getElementById('startType').value;
+            const year = parseInt(document.getElementById('year').value);
+            
+            if (isNaN(startDate.getTime())) {
+                alert('Пожалуйста, выберите корректную дату начала');
+                return;
+            }
+            
+            const calendar = document.getElementById('calendar');
+            const stats = document.getElementById('stats');
+            calendar.innerHTML = '';
+            stats.innerHTML = '';
+            
+            let workDays = 0;
+            let restDays = 0;
+            let secondRestDays = 0;
+            
+            // Создаем календарь на весь год
+            for (let month = 0; month < 12; month++) {
+                const monthDate = new Date(year, month, 1);
+                const monthName = monthDate.toLocaleString('ru', { month: 'long' });
+                
+                // Заголовок месяца
+                const monthHeader = document.createElement('div');
+                monthHeader.className = 'month-header';
+                monthHeader.textContent = monthName.charAt(0).toUpperCase() + monthName.slice(1);
+                calendar.appendChild(monthHeader);
+                
+                // Заголовки дней недели
+                const weekHeader = document.createElement('div');
+                weekHeader.className = 'calendar-header';
+                ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'].forEach(day => {
+                    const dayEl = document.createElement('div');
+                    dayEl.textContent = day;
+                    weekHeader.appendChild(dayEl);
+                });
+                calendar.appendChild(weekHeader);
+                
+                // Дни месяца
+                const daysContainer = document.createElement('div');
+                daysContainer.className = 'calendar';
+                
+                const daysInMonth = new Date(year, month + 1, 0).getDate();
+                const firstDayOfMonth = new Date(year, month, 1).getDay();
+                
+                // Пустые дни в начале месяца
+                const startOffset = firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1;
+                for (let i = 0; i < startOffset; i++) {
+                    const emptyDay = document.createElement('div');
+                    emptyDay.className = 'day empty-day';
+                    daysContainer.appendChild(emptyDay);
+                }
+                
+                // Заполняем дни месяца
+                for (let day = 1; day <= daysInMonth; day++) {
+                    const currentDate = new Date(year, month, day);
+                    const daysDiff = Math.floor((currentDate - startDate) / (1000 * 60 * 60 * 24));
+                    
+                    let dayType = '';
+                    let dayTitle = '';
+                    
+                    if (daysDiff >= 0) {
+                        const cycleDay = daysDiff % 3;
+                        
+                        if (startType === 'work') {
+                            if (cycleDay === 0) {
+                                dayType = 'work-day';
+                                dayTitle = 'Рабочий день';
+                                workDays++;
+                            } else if (cycleDay === 1) {
+                                dayType = 'weekend';
+                                dayTitle = 'Выходной';
+                                restDays++;
+                            } else {
+                                dayType = 'rest-day';
+                                dayTitle = 'Отдых';
+                                secondRestDays++;
+                            }
+                        } else {
+                            if (cycleDay === 0) {
+                                dayType = 'weekend';
+                                dayTitle = 'Выходной';
+                                restDays++;
+                            } else if (cycleDay === 1) {
+                                dayType = 'rest-day';
+                                dayTitle = 'Отдых';
+                                secondRestDays++;
+                            } else {
+                                dayType = 'work-day';
+                                dayTitle = 'Рабочий день';
+                                workDays++;
+                            }
+                        }
+                    }
+                    
+                    const dayEl = document.createElement('div');
+                    dayEl.className = `day ${dayType}`;
+                    dayEl.textContent = day;
+                    dayEl.title = `${day} ${monthName}: ${dayTitle}`;
+                    
+                    // Помечаем текущий день
+                    const today = new Date();
+                    if (currentDate.toDateString() === today.toDateString()) {
+                        dayEl.classList.add('current-day');
+                    }
+                    
+                    daysContainer.appendChild(dayEl);
+                }
+                
+                calendar.appendChild(daysContainer);
+            }
+            
+            // Статистика
+            stats.innerHTML = `
+                <h3>Статистика за ${year} год:</h3>
+                <p>Рабочих дней: <strong>${workDays}</strong></p>
+                <p>Выходных: <strong>${restDays}</strong></p>
+                <p>Дней отдыха: <strong>${secondRestDays}</strong></p>
+                <p>Всего дней: <strong>${workDays + restDays + secondRestDays}</strong></p>
+            `;
+        }
+        
+        // Инициализация при загрузке
+        window.onload = function() {
+            initializeDates();
+            generateSchedule();
+        };
+        
+        // Сохранение в localStorage
+        function saveSettings() {
+            const settings = {
+                startDate: document.getElementById('startDate').value,
+                startType: document.getElementById('startType').value,
+                year: document.getElementById('year').value
+            };
+            localStorage.setItem('workScheduleSettings', JSON.stringify(settings));
+        }
+        
+        // Загрузка из localStorage
+        function loadSettings() {
+            const saved = localStorage.getItem('workScheduleSettings');
+            if (saved) {
+                const settings = JSON.parse(saved);
+                document.getElementById('startDate').value = settings.startDate;
+                document.getElementById('startType').value = settings.startType;
+                document.getElementById('year').value = settings.year;
+            }
+        }
+        
+        // Автосохранение при изменении
+        document.getElementById('startDate').addEventListener('change', saveSettings);
+        document.getElementById('startType').addEventListener('change', saveSettings);
+        document.getElementById('year').addEventListener('change', saveSettings);
+        
+        // Загружаем настройки при старте
+        window.onload = function() {
+            initializeDates();
+            loadSettings();
+            generateSchedule();
+        };
+    </script>
+</body>
+</html>
